@@ -1,6 +1,6 @@
 On Error Resume Next
 
-Class Iper
+Class IpListener
 	Sub waitToConnect()
 		isConnected = False
 		While isConnected = False
@@ -31,7 +31,7 @@ Class Iper
 	End Function
 
 	Function isIpSame(ipNew)
-		Const iplog = "C:\Users\Wayne\AppData\Local\iplog.txt"
+		Const iplog = "C:\Users\Wayne\AppData\Local\iplog.txt" 'Change the user to others
 		Const ForReading = 1
 		Const ForWriting = 2
 		Const ForAppending = 8
@@ -39,7 +39,7 @@ Class Iper
 		Set objFSO = CreateObject("Scripting.FileSystemObject")
 		If objFSO.FileExists(iplog) Then
 			Set objFile = objFSO.OpenTextFile(iplog, ForReading)
-			ipOld = Replace(objFile.ReadAll, vbNewLine, "") 'Mark, read a line with '\n', delete it
+			ipOld = Replace(objFile.ReadAll, vbNewLine, "") 'Mark, read a line with '\n', delete '\n'
 			objFile.Close
 			'MsgBox StrComp(Trim(CStr(ipNew)), Trim(CStr(ipOld)), 1) 
 			If Trim(CStr(ipNew)) = Trim(CStr(ipOld)) Then
@@ -70,10 +70,10 @@ Class Iper
 		CDO.Subject = "IP of My Computer"
 		CDO.From = Email_From
 		CDO.To = Email_To
-		msg = CStr(Now()) + " @ " + ip ' Here
+		msg = CStr(Now()) + " @ " + ip 'Do convert Now() to String
 		'MsgBox msg
 		CDO.TextBody = msg
-		'cdo.AddAttachment "C:\hello.txt"
+		'cdo.AddAttachment "C:\hello.txt" 'If has attachment, add here.
 		Const schema = "http://schemas.microsoft.com/cdo/configuration/"
 		With CDO.Configuration.Fields
 			.Item(schema & "sendusing") = 2
@@ -92,7 +92,7 @@ Class Iper
 	End Sub
 
 	Public Sub Listen()
-	MsgBox "In listening."
+	'MsgBox "In listening."
 	isFirstRun = True
 		While True
 			waitToConnect
@@ -102,11 +102,11 @@ Class Iper
 				sendEmail ip
 				isFirstRun = False
 			End If 
-			WSCript.Sleep 20000
+			WSCript.Sleep 3600000 'Check ip every 1 hour.
 		WEnd
 	End Sub
 
 End Class 
 
-Set myiper = new Iper
-myiper.Listen
+Set ipl = new IpListener
+ipl.Listen
